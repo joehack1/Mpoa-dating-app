@@ -44,12 +44,7 @@ const Login = () => {
         position: 'top-right'
       })
       
-      // Check if user has paid
-      if (result.data.user.isPaid) {
-        navigate('/dashboard')
-      } else {
-        navigate('/payment')
-      }
+      navigate('/dashboard')
     } else {
       toast({
         title: 'Login failed',

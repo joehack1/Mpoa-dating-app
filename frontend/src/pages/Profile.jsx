@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import {
   Box,
   Button,
@@ -216,6 +217,26 @@ const Profile = () => {
             </Button>
           </VStack>
         </Box>
+
+        {!user?.isPaid && (
+          <Box
+            bg="blue.50"
+            borderRadius="lg"
+            p={6}
+            mt={8}
+            textAlign="center"
+          >
+            <Heading size="md" mb={3} color="blue.600">
+              🚀 Ready to Find Your Match?
+            </Heading>
+            <Text mb={4} color="gray.700">
+              Complete your profile and upgrade to premium to start browsing profiles and connecting with potential matches!
+            </Text>
+            <Button as={Link} to="/payment" colorScheme="blue" size="lg">
+              Upgrade to Premium - {user?.gender === 'male' ? '100' : '50'} KSH
+            </Button>
+          </Box>
+        )}
       </VStack>
     </Container>
   )

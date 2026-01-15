@@ -99,12 +99,12 @@ const Register = () => {
     if (result.success) {
       toast({
         title: 'Welcome! 🎉',
-        description: `Registration successful. ${formData.gender === 'male' ? '100' : '50'} KSH payment required to activate account.`,
+        description: 'Registration successful! You can now explore the app. Upgrade to premium to browse profiles.',
         status: 'success',
         duration: 5000,
         position: 'top-right'
       })
-      navigate('/payment')
+      navigate('/dashboard')
     } else {
       toast({
         title: 'Registration failed',

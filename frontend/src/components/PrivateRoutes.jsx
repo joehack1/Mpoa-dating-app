@@ -2,7 +2,7 @@ import { Navigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { Spinner, Center } from '@chakra-ui/react'
 
-const PrivateRoute = ({ children }) => {
+const PrivateRoute = ({ children, requirePayment = false }) => {
   const { user, loading } = useAuth()
 
   if (loading) {
@@ -17,8 +17,8 @@ const PrivateRoute = ({ children }) => {
     return <Navigate to="/login" />
   }
 
-  // Check if user has paid
-  if (!user.isPaid && window.location.pathname !== '/payment') {
+  // Only redirect to payment for routes that explicitly require payment
+  if (requirePayment && !user.isPaid && window.location.pathname !== '/payment') {
     return <Navigate to="/payment" />
   }
 

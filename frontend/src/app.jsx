@@ -43,7 +43,7 @@ function App() {
             </PrivateRoute>
           } />
           <Route path="/browse" element={
-            <PrivateRoute>
+            <PrivateRoute requirePayment={true}>
               <Browse />
             </PrivateRoute>
           } />
