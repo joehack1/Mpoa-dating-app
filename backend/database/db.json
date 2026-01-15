@@ -16,6 +16,48 @@
       "paymentAmount": 100,
       "createdAt": "2026-01-15T13:10:36.422Z",
       "profilePhoto": null
+    },
+    {
+      "name": "joe",
+      "email": "joelluke@gmail.com",
+      "password": "$2a$10$6qgHMPc8AtJ2bnCASfbwye80MhPcqQSJjJ57i.mdrJpTEBYRJcGsK",
+      "gender": "male",
+      "phone": "254",
+      "age": 28,
+      "profession": "software developer",
+      "hobbies": [],
+      "isPaid": false,
+      "paymentAmount": 100,
+      "createdAt": "2026-01-15T13:15:37.186Z",
+      "profilePhoto": null
+    },
+    {
+      "name": "opp",
+      "email": "joelluke10lk0@gmail.com",
+      "password": "$2a$10$RSbBdgyvZFWj7wBYp4Gcs.Y80BTdIUFZHucijlZEvBNegCRbZ/BjG",
+      "gender": "male",
+      "phone": "254",
+      "age": 49,
+      "profession": "software developer",
+      "hobbies": [],
+      "isPaid": false,
+      "paymentAmount": 100,
+      "createdAt": "2026-01-15T13:16:42.468Z",
+      "profilePhoto": null
+    },
+    {
+      "name": "opp",
+      "email": "joelluhke10lk0@gmail.com",
+      "password": "$2a$10$dP7jYKhxMreq5.2T/2C2SOi8ahchlHkC/dr3mufCBnA3r7NBWUHUG",
+      "gender": "male",
+      "phone": "254",
+      "age": 49,
+      "profession": "software developer",
+      "hobbies": [],
+      "isPaid": false,
+      "paymentAmount": 100,
+      "createdAt": "2026-01-15T13:18:40.880Z",
+      "profilePhoto": null
     }
   ],
   "payments": [],

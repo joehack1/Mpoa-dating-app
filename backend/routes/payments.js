@@ -1,12 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
-const { userDB, paymentDB } = require('../database/db');
+const User = require('../models/User');
+const { paymentDB } = require('../database/db');
 
 // Process payment (dummy implementation for testing)
 router.post('/process', auth, async (req, res) => {
     try {
-        const user = await userDB.findById(req.userId);
+        const user = await User.findById(req.userId);
         if (!user) return res.status(404).json({ error: 'User not found' });
         if (user.isPaid) return res.status(400).json({ error: 'Already paid' });
 
@@ -14,7 +15,8 @@ router.post('/process', auth, async (req, res) => {
         setTimeout(async () => {
             try {
                 // Mark user as paid
-                await userDB.update(req.userId, { isPaid: true });
+                user.isPaid = true;
+                await user.save();
 
                 // Create payment record
                 await paymentDB.create({
@@ -46,7 +48,7 @@ router.post('/process', auth, async (req, res) => {
 // Check payment status
 router.get('/status', auth, async (req, res) => {
     try {
-        const user = await userDB.findById(req.userId);
+        const user = await User.findById(req.userId);
         if (!user) return res.status(404).json({ error: 'User not found' });
 
         res.json({
@@ -72,11 +74,12 @@ router.get('/history', auth, async (req, res) => {
 // Simulate instant payment completion (for testing)
 router.post('/complete-test-payment', auth, async (req, res) => {
     try {
-        const user = await userDB.findById(req.userId);
+        const user = await User.findById(req.userId);
         if (!user) return res.status(404).json({ error: 'User not found' });
 
         // Mark as paid immediately
-        await userDB.update(req.userId, { isPaid: true });
+        user.isPaid = true;
+        await user.save();
 
         // Create payment record
         await paymentDB.create({
@@ -93,16 +96,11 @@ router.post('/complete-test-payment', auth, async (req, res) => {
             amount: user.paymentAmount,
             isPaid: true
         });
-module.exports = router;
-        
-        res.json({
-            message: 'Account activated',
-            isPaid: true,
-            amount: user.paymentAmount
-        });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 });
+
+module.exports = router;
 
 module.exports = router;
