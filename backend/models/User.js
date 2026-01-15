@@ -35,13 +35,15 @@ class User {
   // Static methods
   static async findOne(query) {
     if (query.email) {
-      return await userDB.findByEmail(query.email);
+      const userData = await userDB.findByEmail(query.email);
+      return userData ? new User(userData) : null;
     }
     return null;
   }
 
   static async findById(id) {
-    return await userDB.findById(id);
+    const userData = await userDB.findById(id);
+    return userData ? new User(userData) : null;
   }
 }
 

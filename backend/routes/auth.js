@@ -16,18 +16,18 @@ router.post('/register', async (req, res) => {
         await user.save();
         
         // Create token
-        const token = jwt.sign({ userId: savedUser.id, gender: savedUser.gender }, process.env.JWT_SECRET, { expiresIn: '7d' });
+        const token = jwt.sign({ userId: user.id, gender: user.gender }, process.env.JWT_SECRET, { expiresIn: '7d' });
         
         res.status(201).json({
             message: 'Registration successful',
             token,
             user: {
-                id: savedUser.id,
-                name: savedUser.name,
-                gender: savedUser.gender,
-                paymentAmount: savedUser.paymentAmount,
-                isPaid: savedUser.isPaid,
-                profilePhoto: savedUser.profilePhoto
+                id: user.id,
+                name: user.name,
+                gender: user.gender,
+                paymentAmount: user.paymentAmount,
+                isPaid: user.isPaid,
+                profilePhoto: user.profilePhoto
             }
         });
     } catch (error) {
