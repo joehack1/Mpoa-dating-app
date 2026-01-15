@@ -1,61 +1,54 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
-const User = require('../models/User');
+const { userDB } = require('../database/db');
 
 // Get user profile
 router.get('/me', auth, async (req, res) => {
     try {
-        const user = await User.findById(req.userId).select('-password');
-        res.json(user);
+        const user = await userDB.findById(req.userId);
+        if (!user) return res.status(404).json({ error: 'User not found' });
+
+        // Remove password from response
+        const { password, ...userWithoutPassword } = user;
+        res.json(userWithoutPassword);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 });
 
 // Update profile
-router.put('/update', auth, async (req, res) => {
+router.put('/me', auth, async (req, res) => {
     try {
-        const user = await User.findByIdAndUpdate(
-            req.userId,
-            { $set: req.body },
-            { new: true }
-        ).select('-password');
-        
-        res.json({ message: 'Profile updated', user });
+        const updatedUser = await userDB.update(req.userId, req.body);
+        if (!updatedUser) return res.status(404).json({ error: 'User not found' });
+
+        // Remove password from response
+        const { password, ...userWithoutPassword } = updatedUser;
+        res.json({ message: 'Profile updated', user: userWithoutPassword });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 });
 
-// Browse profiles (opposite gender, paid users)
-router.get('/browse', auth, async (req, res) => {
+// Browse profiles (all users except current, for paid users)
+router.get('/', auth, async (req, res) => {
     try {
-        const currentUser = await User.findById(req.userId);
-        const oppositeGender = currentUser.gender === 'male' ? 'female' : 'male';
-        
-        const profiles = await User.find({
-            gender: oppositeGender,
-            isPaid: true
-        }).select('name age profession hobbies profilePhoto');
-        
-        res.json(profiles);
+        const profiles = await userDB.getAllExcept(req.userId);
+        res.json(profiles.map(profile => {
+            const { password, ...profileWithoutPassword } = profile;
+            return profileWithoutPassword;
+        }));
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 });
 
-// Upload photo
-router.post('/upload-photo', auth, async (req, res) => {
+// Like profile
+router.post('/:id/like', auth, async (req, res) => {
     try {
-        const { photoUrl } = req.body;
-        const user = await User.findByIdAndUpdate(
-            req.userId,
-            { profilePhoto: photoUrl },
-            { new: true }
-        ).select('-password');
-        
-        res.json({ message: 'Photo uploaded', profilePhoto: user.profilePhoto });
+        // For now, just return success
+        res.json({ message: 'Profile liked' });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

@@ -27,7 +27,7 @@ import {
   Center,
   Avatar
 } from '@chakra-ui/react'
-import { AddIcon } from '@chakra-ui/icons'
+import { AddIcon, EditIcon } from '@chakra-ui/icons'
 import axios from 'axios'
 import { useAuth } from '../context/AuthContext'
 
@@ -43,6 +43,7 @@ const Profile = () => {
     interests: []
   })
   const [newInterest, setNewInterest] = useState('')
+  const [uploadingImage, setUploadingImage] = useState(false)
   const toast = useToast()
 
   useEffect(() => {
@@ -80,6 +81,75 @@ const Profile = () => {
       ...prev,
       interests: prev.interests.filter(i => i !== interest)
     }))
+  }
+
+  const handleImageUpload = async (event) => {
+    const file = event.target.files[0]
+    if (!file) return
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast({
+        title: 'Invalid file type',
+        description: 'Please select an image file',
+        status: 'error',
+        duration: 3000
+      })
+      return
+    }
+
+    // Validate file size (5MB limit)
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        title: 'File too large',
+        description: 'Please select an image smaller than 5MB',
+        status: 'error',
+        duration: 3000
+      })
+      return
+    }
+
+    setUploadingImage(true)
+
+    try {
+      const token = localStorage.getItem('dating_token')
+      const formDataUpload = new FormData()
+      formDataUpload.append('profilePhoto', file)
+
+      const response = await axios.post('http://localhost:5000/api/upload', formDataUpload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+
+      // Update profile with new photo URL
+      await axios.put('http://localhost:5000/api/profiles/me', {
+        profilePhoto: response.data.fileUrl
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+
+      // Update local user data
+      const updatedUser = { ...user, profilePhoto: response.data.fileUrl }
+      login(localStorage.getItem('dating_token'))
+
+      toast({
+        title: 'Photo uploaded',
+        description: 'Your profile photo has been updated',
+        status: 'success',
+        duration: 3000
+      })
+    } catch (error) {
+      toast({
+        title: 'Upload failed',
+        description: error.response?.data?.error || 'Failed to upload photo',
+        status: 'error',
+        duration: 3000
+      })
+    } finally {
+      setUploadingImage(false)
+    }
   }
 
   const handleSubmit = async (e) => {
@@ -132,7 +202,32 @@ const Profile = () => {
         </Box>
 
         <Box display="flex" justifyContent="center" mb={6}>
-          <Avatar size="xl" name={formData.name} />
+          <Box position="relative">
+            <Avatar
+              size="xl"
+              name={formData.name}
+              src={user?.profilePhoto ? `http://localhost:5000${user.profilePhoto}` : undefined}
+            />
+            <IconButton
+              icon={<EditIcon />}
+              size="sm"
+              colorScheme="blue"
+              borderRadius="full"
+              position="absolute"
+              bottom={0}
+              right={0}
+              onClick={() => document.getElementById('profile-photo-input').click()}
+              isLoading={uploadingImage}
+              loadingText="Uploading..."
+            />
+            <Input
+              id="profile-photo-input"
+              type="file"
+              accept="image/*"
+              display="none"
+              onChange={handleImageUpload}
+            />
+          </Box>
         </Box>
 
         <Box as="form" onSubmit={handleSubmit}>

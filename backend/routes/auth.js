@@ -16,17 +16,18 @@ router.post('/register', async (req, res) => {
         await user.save();
         
         // Create token
-        const token = jwt.sign({ userId: user._id, gender: user.gender }, process.env.JWT_SECRET, { expiresIn: '7d' });
+        const token = jwt.sign({ userId: savedUser.id, gender: savedUser.gender }, process.env.JWT_SECRET, { expiresIn: '7d' });
         
         res.status(201).json({
             message: 'Registration successful',
             token,
             user: {
-                id: user._id,
-                name: user.name,
-                gender: user.gender,
-                paymentAmount: user.paymentAmount,
-                isPaid: user.isPaid
+                id: savedUser.id,
+                name: savedUser.name,
+                gender: savedUser.gender,
+                paymentAmount: savedUser.paymentAmount,
+                isPaid: savedUser.isPaid,
+                profilePhoto: savedUser.profilePhoto
             }
         });
     } catch (error) {
@@ -43,18 +44,22 @@ router.post('/login', async (req, res) => {
         const isMatch = await user.comparePassword(password);
         if (!isMatch) return res.status(400).json({ error: 'Invalid credentials' });
         
-        const token = jwt.sign({ userId: user._id, gender: user.gender }, process.env.JWT_SECRET, { expiresIn: '7d' });
+        const token = jwt.sign({ userId: user.id, gender: user.gender }, process.env.JWT_SECRET, { expiresIn: '7d' });
         
         res.json({
             token,
             user: {
-                id: user._id,
+                id: user.id,
                 name: user.name,
+                email: user.email,
                 gender: user.gender,
-                isPaid: user.isPaid,
-                profilePhoto: user.profilePhoto,
+                phone: user.phone,
+                age: user.age,
                 profession: user.profession,
-                hobbies: user.hobbies
+                hobbies: user.hobbies,
+                isPaid: user.isPaid,
+                paymentAmount: user.paymentAmount,
+                profilePhoto: user.profilePhoto
             }
         });
     } catch (error) {

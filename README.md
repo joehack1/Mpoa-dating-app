@@ -24,8 +24,6 @@ dating-app/
 Before running this application, make sure you have the following installed:
 
 - **Node.js** (v16 or higher) - [Download here](https://nodejs.org/)
-- **MongoDB** (local or cloud instance like MongoDB Atlas)
-- **Expo CLI** (for mobile app development)
 - **Git** (for cloning the repository)
 
 ### Verify Installation
@@ -33,9 +31,6 @@ Before running this application, make sure you have the following installed:
 # Check Node.js and npm versions
 node --version
 npm --version
-
-# Check if MongoDB is running (if using local instance)
-mongod --version
 ```
 
 ## Installation & Setup
@@ -54,11 +49,8 @@ cd backend
 # Install dependencies
 npm install
 
-# Create environment file
-cp .env.example .env
-
-# Edit .env with your configuration
-# Add your MongoDB connection string and JWT secret
+# The backend uses a local JSON database (no MongoDB required!)
+# Data is stored in backend/database/db.json
 ```
 
 ### 3. Frontend Setup
@@ -87,11 +79,10 @@ npm install -g expo-cli
 ## Environment Configuration
 
 ### Backend (.env)
-Create a `.env` file in the `backend/` directory with:
+The backend uses a local JSON database, so minimal configuration is needed:
 ```env
-PORT=5000
-MONGODB_URI=mongodb://localhost:27017/datingapp
 JWT_SECRET=your-super-secret-jwt-key-here
+PORT=5000
 NODE_ENV=development
 ```
 
@@ -160,15 +151,24 @@ npx expo start --android # Run on Android device/emulator
 npx expo start --ios     # Run on iOS device/simulator
 ```
 
-## API Endpoints
+## Data Storage
 
-The backend provides the following main endpoints:
+This application uses a **local JSON database** (LowDB) instead of MongoDB for simplicity:
 
-- `POST /api/auth/register` - User registration
-- `POST /api/auth/login` - User login
-- `GET /api/profiles/me` - Get current user profile
-- `GET /api/profiles` - Get all user profiles
-- `POST /api/payments/process` - Process payments
+- **Database file**: `backend/database/db.json`
+- **Uploaded images**: Stored in `backend/uploads/`
+- **No external database required** - perfect for development and small-scale use
+
+### Database Structure
+```json
+{
+  "users": [...],
+  "payments": [...],
+  "messages": [...]
+}
+```
+
+All data persists locally and is automatically backed up in JSON format.
 
 ## Technologies Used
 
@@ -182,10 +182,10 @@ The backend provides the following main endpoints:
 ### Backend
 - **Node.js** - Runtime environment
 - **Express.js** - Web framework
-- **MongoDB** - Database
-- **Mongoose** - ODM for MongoDB
+- **LowDB** - Local JSON database (no MongoDB required!)
 - **JWT** - Authentication
 - **bcrypt** - Password hashing
+- **Multer** - File upload handling
 
 ### Mobile App
 - **React Native** - Mobile framework
@@ -220,13 +220,17 @@ If you encounter any issues:
 - Ensure Node.js is installed and added to your PATH
 - Restart your terminal/command prompt
 
-**"MongoDB connection failed"**
-- Ensure MongoDB is running (if using local instance)
-- Check your MONGODB_URI in the .env file
+**"Registration/Login fails"**
+- Ensure the backend server is running on port 5000
+- Check that the JWT_SECRET in backend/.env is set
 
-**"Port already in use"**
-- Change the PORT in backend/.env
-- Or kill the process using the port: `npx kill-port 5000`
+**"File upload fails"**
+- Ensure the backend/uploads directory exists and is writable
+- Check file size (limited to 5MB) and type (images only)
+
+**"Data not persisting"**
+- Data is stored locally in `backend/database/db.json`
+- Ensure the backend has write permissions to this file
 
 **Mobile app issues**
 - Ensure Expo CLI is installed globally
