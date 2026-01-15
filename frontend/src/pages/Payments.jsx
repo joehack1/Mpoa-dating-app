@@ -19,13 +19,14 @@ import {
   Progress,
   Icon
 } from '@chakra-ui/react'
-import { CheckCircleIcon, StarIcon } from '@chakra-ui/icons'
+import { CheckCircleIcon, StarIcon, PhoneIcon } from '@chakra-ui/icons'
 import { useAuth } from '../context/AuthContext'
 import axios from 'axios'
 
 const Payment = () => {
   const [loading, setLoading] = useState(false)
   const [paymentCompleted, setPaymentCompleted] = useState(false)
+  const [simulating, setSimulating] = useState(false)
   const { user } = useAuth()
   const navigate = useNavigate()
   const toast = useToast()
@@ -204,31 +205,14 @@ export default Payment
     }
   }
 
-  const handleMpesaPayment = async () => {
-    toast({
-      title: 'M-Pesa Integration',
-      description: 'Connect your M-Pesa API credentials in backend',
-      status: 'info',
-      duration: 5000
-    })
-  }
-
   const paymentMethods = [
-    {
-      id: 'mpesa',
-      name: 'M-Pesa',
-      icon: '📱',
-      color: 'green',
-      description: 'Pay via M-Pesa STK Push',
-      action: handleMpesaPayment
-    },
     {
       id: 'simulate',
       name: 'Simulate Payment',
       icon: '🧪',
       color: 'blue',
       description: 'Test payment (for development)',
-      action: simulatePayment
+      action: handleTestPayment
     }
   ]
 
@@ -408,7 +392,7 @@ export default Payment
         <Button
           colorScheme="brand"
           size="lg"
-          onClick={simulatePayment}
+          onClick={handleTestPayment}
           isLoading={simulating}
           loadingText="Processing payment..."
           leftIcon={<PhoneIcon />}
