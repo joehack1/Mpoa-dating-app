@@ -66,12 +66,10 @@ app.get('/', (req, res) => {
 const authRoutes = require('./routes/auth');
 const profileRoutes = require('./routes/profiles');
 const paymentRoutes = require('./routes/payments');
-const mpesaRoutes = require('./routes/mpesa');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/profiles', profileRoutes);
 app.use('/api/payments', paymentRoutes);
-app.use('/api/mpesa', mpesaRoutes);
 
 // File upload route
 app.post('/api/upload', upload.single('profilePhoto'), (req, res) => {
