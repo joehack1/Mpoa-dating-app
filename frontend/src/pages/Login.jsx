@@ -46,7 +46,7 @@ const Login = () => {
       
       // Check if user has paid
       if (result.data.user.isPaid) {
-        navigate('/')
+        navigate('/dashboard')
       } else {
         navigate('/payment')
       }
