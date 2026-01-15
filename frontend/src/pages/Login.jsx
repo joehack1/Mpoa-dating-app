@@ -93,7 +93,7 @@ const Login = () => {
               </Heading>
             </Box>
             <Text color="gray.600">
-              Men: 100 KSH | Women: 50 KSH
+              Find your soulmate today. Sign in to continue.
             </Text>
           </VStack>
 
